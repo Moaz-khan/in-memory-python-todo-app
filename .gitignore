@@ -176,3 +176,6 @@ dmypy.json
 .Trashes
 ehthumbs.db
 Thumbs.db
+
+# MCP / project config
+.mcp.json
