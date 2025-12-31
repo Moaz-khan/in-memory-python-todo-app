@@ -1,0 +1,5 @@
+# In-Memory Python Console Todo Application
+# Requirements file
+
+# No external dependencies needed for basic console application
+# Using only built-in Python libraries
