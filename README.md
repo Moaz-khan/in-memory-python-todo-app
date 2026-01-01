@@ -1,59 +1,144 @@
-# In-Memory Python Console Todo Application
+# FastAPI Todo API
 
-This is a console-based todo application that stores tasks in memory only. It allows users to add, view, update, delete, and mark tasks as complete/incomplete.
+A simple and efficient todo API built with FastAPI, featuring user-based task management with full CRUD operations.
 
 ## Features
 
-- Add tasks with title and description
-- View all tasks in a tabular format with status indicators
-- Update task details by ID
-- Delete tasks by ID
-- Mark tasks as complete or incomplete by ID
-- In-memory storage (data resets on program restart)
+- Create, read, update, delete tasks
+- Toggle task completion status
+- User-based task organization
+- In-memory storage (no database required)
+- Automatic OpenAPI/Swagger documentation
+- Pydantic model validation
+- Comprehensive error handling
 
-## Prerequisites
+## Endpoints
 
-- Python 3.13 or higher
+### Task Management
 
-## Setup
+- `GET /api/{user_id}/tasks` - Get all tasks for a user
+- `POST /api/{user_id}/tasks` - Create a new task
+- `GET /api/{user_id}/tasks/{task_id}` - Get a specific task
+- `PUT /api/{user_id}/tasks/{task_id}` - Update a task
+- `DELETE /api/{user_id}/tasks/{task_id}` - Delete a task
+- `PATCH /api/{user_id}/tasks/{task_id}/complete` - Toggle task completion status
+
+### API Documentation
+
+- `/docs` - Interactive API documentation (Swagger UI)
+- `/redoc` - Alternative API documentation (ReDoc)
+
+## Getting Started
+
+### Prerequisites
+
+- Python 3.13+
+- pip package manager
+
+### Installation
 
 1. Clone the repository
-2. Install dependencies (if any) using `pip install -r requirements.txt`
-3. Run the application with `python src/todo_app/main.py`
+2. Install dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
+3. Run the application:
+   ```bash
+   uvicorn src.todo_api.main:app --reload
+   ```
 
-## Usage
+### Usage
 
-Run the application and follow the on-screen menu prompts:
+The API will be available at `http://localhost:8000`. You can access the interactive documentation at `http://localhost:8000/docs`.
 
-1. Add Task - Add a new task with title and description
-2. View Tasks - Display all tasks with their status
-3. Update Task - Modify an existing task by ID
-4. Delete Task - Remove a task by ID
-5. Mark Task Complete/Incomplete - Toggle task completion status
-6. Exit - Quit the application
+## Example Requests
+
+### Create a Task
+
+```bash
+curl -X POST "http://localhost:8000/api/user123/tasks" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "title": "Buy groceries",
+    "description": "Milk, bread, eggs"
+  }'
+```
+
+### Get All Tasks for a User
+
+```bash
+curl -X GET "http://localhost:8000/api/user123/tasks"
+```
+
+### Update a Task
+
+```bash
+curl -X PUT "http://localhost:8000/api/user123/tasks/task_id" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "title": "Buy groceries (updated)",
+    "completed": true
+  }'
+```
+
+### Toggle Task Completion
+
+```bash
+curl -X PATCH "http://localhost:8000/api/user123/tasks/task_id/complete"
+```
 
 ## Project Structure
 
 ```
 src/
-├── todo_app/
-│   ├── __init__.py
-│   ├── models/
-│   │   ├── __init__.py
-│   │   └── task.py              # Task data model
-│   ├── services/
-│   │   ├── __init__.py
-│   │   └── task_service.py      # Task business logic
-│   ├── cli/
-│   │   ├── __init__.py
-│   │   └── cli_controller.py    # Command-line interface
-│   └── main.py                  # Application entry point
+└── todo_api/
+    ├── main.py              # FastAPI app instance
+    ├── models/              # Pydantic models
+    │   └── task.py          # Task-related models
+    ├── services/            # Business logic
+    │   ├── task_service.py  # Task operations
+    │   └── storage.py       # In-memory storage
+    ├── routers/             # API routes
+    │   └── tasks.py         # Task endpoints
+    └── utils/               # Utility functions
+        ├── id_generator.py  # ID generation
+        ├── error_handlers.py # Error handling
+        └── logging.py       # Logging configuration
 ```
 
 ## Architecture
 
 The application follows a clean architecture pattern:
-- **Models Layer**: Contains the Task data model
-- **Services Layer**: Contains business logic for task operations
-- **CLI Layer**: Handles user input/output and command routing
-- **Main Module**: Orchestrates the application flow
+
+- **Models**: Pydantic models for request/response validation
+- **Services**: Business logic and data operations
+- **Routers**: API endpoint definitions
+- **Storage**: In-memory data persistence
+
+## Error Handling
+
+The API returns consistent error responses in the format:
+
+```json
+{
+  "success": false,
+  "error": "Error message",
+  "details": { ... }
+}
+```
+
+## Validation
+
+All inputs are validated using Pydantic models with the following rules:
+
+- Task title: Required, 1-255 characters
+- Task description: Optional, up to 1000 characters
+- Task completion: Boolean, defaults to false
+
+## Future Enhancements
+
+- Database integration (PostgreSQL, MongoDB)
+- User authentication and authorization
+- Task categorization and tagging
+- Due dates and reminders
+- Search and filtering capabilities
